@@ -1,11 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import os
-from dotenv import load_dotenv
+from app.core.config import settings
 
-load_dotenv()
 
-db_url=os.getenv("DATABASE_URL")
+db_url=settings.DATABASE_URL
 
 engine=create_engine(
     db_url,
