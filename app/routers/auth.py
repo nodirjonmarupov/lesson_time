@@ -15,3 +15,16 @@ def register_user(user_data: UserCreate,db:Session=Depends(get_db)):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Bu email allaqachon ro'yxatdan o'tgan!"
         )
+
+    hashed_pwd=get_password_hash(user_data.password)
+
+    new_user=User(
+        email=user_data.email,
+        hashed_password=hashed_pwd
+    )
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return new_user
