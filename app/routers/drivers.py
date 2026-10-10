@@ -16,3 +16,5 @@ def get_drivers_endpoint(db=Depends(get_db)):
 @router.post("/")
 async def create_driver(driver: CreateDriver):
     return driver
+
+
