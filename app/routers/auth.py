@@ -3,9 +3,10 @@ from app.database.connectoin import get_db
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.schemas.user import UserCreate,UserResponse
-from app.core.security import get_password_hash
+from app.core.security import get_password_hash, verify_access_token,verify_password, create_access_token
 from app.schemas.user import UserLogin, Token
-from app.core.security import verify_password, create_access_token
+from app.core.dependencies import get_current_user
+
 
 router=APIRouter(prefix="/auth",tags=["Authentication"])
 
@@ -50,4 +51,7 @@ def login_user(user_data:UserLogin,db:Session=Depends(get_db)):
     access_token=create_access_token({"sub":user.email})
     return {"access_token":access_token,"token_type":"bearer"}
 
+@router.get("/me",response_model=UserResponse)
+def get_my_profile(current_user: User=Depends(get_current_user)):
+    return current_user
     
