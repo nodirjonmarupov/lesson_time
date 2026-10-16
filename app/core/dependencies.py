@@ -7,14 +7,13 @@ from app.database.connectoin import get_db        # Bazaga ulanish sessiyasi
 from app.models.user import User                  # SQLAlchemy User modeli
 from app.core.security import verify_access_token # Oldin yozgan token tekshiruvchi funksiyamiz
 from app.schemas.user import UserResponse         # Pydantic javob qolipi (schema)
-
+from app.core.jtw import oauth2_scheme
 router = APIRouter(
     prefix="/auth",
     tags=["Auth"]
 )
 
 # 1. OAuth2 scheme: Token qayerdan kelishini va Swagger uchun login URL manzilini ko'rsatamiz
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 # 2. Dependency: Tokenni tekshirib, bazadan foydalanuvchini topib beruvchi qo'riqchi funksiya
