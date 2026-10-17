@@ -3,6 +3,10 @@ from fastapi import Depends,HTTPException,status
 from fastapi.security import OAuth2PasswordBearer
 import jwt
 from app.core.config import settings
+from sqlalchemy.orm import Session
+from app.database.connectoin import get_db
+from app.models.user import User
+
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
@@ -19,7 +23,7 @@ def create_access_token(data:dict):
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
-def get_current_user(token: str = Depends(oauth2_scheme)):
+def get_current_user(token: str = Depends(oauth2_scheme),db: Session=Depends(get_db)):
     credentials_exception=HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="token yaroqsiz yoki mudati tugagan",
@@ -31,10 +35,14 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
         email:str=payload.get("sub")
         if email is None:
             raise credentials_exception
-
+            
     except jwt.PyJWTError:
         raise credentials_exception
 
-    return email
+    user=db.query(User).filter(User.email==email).first()
+    if user is None:
+        raise credentials_exception
+
+    return user
 
 

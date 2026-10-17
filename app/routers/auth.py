@@ -7,9 +7,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.core.jtw import get_current_user
 from app.core.config import UserCreate
 from app.core.jtw import create_access_token
-
+from app.schemas.user import UserCreate,UserRole,UserResponseRole
 # (Token yaratish uchun kerak bo'ladigan funksiyalarni keyingi qadamda yozamiz, hozircha oddiy logikasini ko'ramiz)
-router = APIRouter( tags=["Auth"])
+router = APIRouter(tags=["Auth"])
 
 @router.post("/login")
 def login(form_data:OAuth2PasswordRequestForm=Depends(),db:Session=Depends(get_db)):
@@ -57,7 +57,9 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
     hashed_password = get_password_hash(user_data.password)
     
     # 3. Yangi foydalanuvchini yaratamiz
-    new_user = User(email=user_data.email, hashed_password=hashed_password)
+    new_user = User(email=user_data.email, 
+                    hashed_password=hashed_password,
+                    role=user_data.role)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
